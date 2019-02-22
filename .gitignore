@@ -1,0 +1,7 @@
+.idea/
+__pycache__/
+data/
+models/
+scores/
+.ipynb_checkpoints/
+submissions/
