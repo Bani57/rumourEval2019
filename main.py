@@ -1,14 +1,15 @@
-from dependencies import glob, json, isfile, literal_eval
-from tweet_classes import *
+from dependencies import glob, json, isfile, exists, makedirs, literal_eval
+from tweet_classes import ThreadTree
 from nlp_utils import *
 from graph_utils import *
 from feature_utils import *
 from classification_utils import *
 from file_utils import *
+from statistics import plot_roc_curve
 
 
-def get_threads_from_story(story):
-    folders = glob.glob(twitter_dataset_folder + story + '/*')
+def get_threads_from_story(dataset_folder, story):
+    folders = glob.glob(dataset_folder + story + '/*')
     ids = [
         folder.split("\\")[1] for folder in folders
     ]
@@ -16,8 +17,7 @@ def get_threads_from_story(story):
 
 
 def read_tweet_json(folder, id_thread):
-    source_tweet_json_file = open(
-        folder + "/source-tweet/" + id_thread + ".json", "r")
+    source_tweet_json_file = open(folder + "/source-tweet/" + id_thread + ".json", "r")
     source_tweet_json = source_tweet_json_file.read()
     source_tweet = json.loads(source_tweet_json, encoding='utf-8')
     source_tweet_json_file.close()
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     graph_features = {}
     for twitter_story in twitter_stories:
         if not isfile('data/thread_lists/' + twitter_story):
-            thread_folders, thread_ids = get_threads_from_story(twitter_story)
+            thread_folders, thread_ids = get_threads_from_story(twitter_dataset_folder, twitter_story)
             save_object((thread_folders, thread_ids), 'data/thread_lists/' + twitter_story)
         else:
             thread_folders, thread_ids = load_object('data/thread_lists/' + twitter_story)
