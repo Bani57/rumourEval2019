@@ -47,7 +47,7 @@ def min_max_normalize_feature(vector, new_min=0, new_max=1):
 
 class FeatureSelector:
     def __init__(self, dataset, labels):
-        self.dataset = dataset
+        self.dataset = dataset.copy()
         self.labels = labels
         self.feature_names = dataset.columns.values.tolist()
         self.feature_importances = None
@@ -60,7 +60,7 @@ class FeatureSelector:
             if any(value is None for value in feature):
                 feature = remove_missing_values(feature)
             feature = min_max_normalize_feature(feature, -1, 1)
-            self.dataset.loc[:, feature_name] = feature
+            self.dataset[feature_name] = feature
 
     def remove_uninformative_features(self):
         model = SelectFromModel(random_forest)
