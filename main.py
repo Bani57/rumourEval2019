@@ -265,8 +265,8 @@ if __name__ == "__main__":
     else:
         word2vec_tweet_features = load_object('data/features/word2vec/tweets')
         word2vec_user_description_features = load_object('data/features/word2vec/user_descriptions')
-        word_cluster_map_tweets = load_object('data/word_cluster_map_tweets')
-        word_cluster_map_user_descriptions = load_object('data/word_cluster_map_user_descriptions')
+        word_cluster_map_tweets = load_object('data/word2vec_documents/word_cluster_map_tweets')
+        word_cluster_map_user_descriptions = load_object('data/word2vec_documents/word_cluster_map_user_descriptions')
 
     if not isfile('data/features/tweets_language_style') or not isfile(
             'data/features/user_descriptions_language_style'):
