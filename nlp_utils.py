@@ -12,7 +12,7 @@ lemmatizer = WordNetLemmatizer()
 logging.basicConfig(
     format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-special_tokens = ('QUOTE', 'EMAIL', 'USER', 'NUM', 'HASHTAG', '.', ',', '?', '!', ':', '-', '+', '\n', '\r')
+special_tokens = ('URL', 'QUOTE', 'EMAIL', 'USER', 'NUM', 'HASHTAG', '.', ',', '?', '!', ':', '-', '+', '\n', '\r')
 
 sia = SentimentIntensityAnalyzer()
 
