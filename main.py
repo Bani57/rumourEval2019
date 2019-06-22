@@ -555,5 +555,13 @@ if __name__ == "__main__":
         scores = pd.DataFrame(np.array(list(scores.values()), dtype='float'), index=list(scores.keys()),
                               columns=evaluation_metrics)
         scores.to_csv('scores/task_b_veracity_model_scores.tsv', sep='\t', index=True, header=True, encoding='utf-8')
+
+        veracity_train_set, veracity_test_set, veracity_train_labels, veracity_test_labels = \
+            train_test_split(dataset_task_b, class_labels_task_b,
+                             shuffle=True, stratify=class_labels_task_b, test_size=0.3)
+        veracity_model.fit(veracity_train_set, veracity_train_labels)
+        plot_roc_curve(veracity_model, veracity_test_set, veracity_test_labels, "Veracity model",
+                       "plots/veracity_model_roc_curve.png")
+
     else:
         veracity_model = load_object('models/task_b_veracity_model')
