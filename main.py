@@ -380,9 +380,10 @@ if __name__ == "__main__":
         dataset_task_a = []
         feature_labels_task_a = list(feature_labels)
         feature_labels_task_a.extend([label + " DIFFERENCE" for label in feature_labels])
+        feature_labels_task_a = ["TWEET ID", ] + feature_labels_task_a
         class_labels_task_b = []
         dataset_task_b = []
-        feature_labels_task_b = feature_labels
+        feature_labels_task_b = ["TWEET ID", ] + feature_labels
         for tweet_file in tweet_files:
             tweet = load_object(tweet_file)
             if tweet.is_usable() and tweet.annotation is not None:
@@ -394,31 +395,36 @@ if __name__ == "__main__":
                     task_a_features_for_tweet = dataset[tweet_id]
                     task_a_features_for_tweet.extend(
                         difference_of_feature_vectors(dataset[tweet_id], dataset[source_tweet_id]))
+                    task_a_features_for_tweet = [tweet_id, ] + task_a_features_for_tweet
                     dataset_task_a.append(task_a_features_for_tweet)
                 if 'true' in tweet.annotation.keys():
                     class_labels_task_b.append(int(tweet.annotation['true']))
-                    dataset_task_b.append(dataset[tweet_id])
+                    dataset_task_b.append([tweet_id, ] + dataset[tweet_id])
 
         del dataset
         save_object(class_labels_task_a, 'data/class_labels/class_labels_task_a')
-        dataset_task_a = pd.DataFrame(dataset_task_a, columns=feature_labels_task_a)
+        dataset_task_a = np.array(dataset_task_a)
+        dataset_task_a = pd.DataFrame(dataset_task_a[:, 1:], columns=feature_labels_task_a[1:],
+                                      index=dataset_task_a[:, 0])
         save_object(feature_labels_task_a, 'data/features/labels/feature_labels_task_a')
-        dataset_task_a.to_csv('data/datasets/dataset_task_a.tsv', sep='\t', header=True, index=False, encoding='utf-8')
+        dataset_task_a.to_csv('data/datasets/dataset_task_a.tsv', sep='\t', header=True, index=True, encoding='utf-8')
 
         save_object(class_labels_task_b, 'data/class_labels/class_labels_task_b')
-        dataset_task_b = pd.DataFrame(dataset_task_b, columns=feature_labels_task_b)
+        dataset_task_b = np.array(dataset_task_b)
+        dataset_task_b = pd.DataFrame(dataset_task_b[:, 1:], columns=feature_labels_task_b[1:],
+                                      index=dataset_task_b[:, 0])
         save_object(feature_labels_task_b, 'data/features/labels/feature_labels_task_b')
-        dataset_task_b.to_csv('data/datasets/dataset_task_b.tsv', sep='\t', header=True, index=False, encoding='utf-8')
+        dataset_task_b.to_csv('data/datasets/dataset_task_b.tsv', sep='\t', header=True, index=True, encoding='utf-8')
 
     else:
         del dataset
         class_labels_task_a = load_object('data/class_labels/class_labels_task_a')
-        dataset_task_a = pd.read_csv('data/datasets/dataset_task_a.tsv', sep='\t', index_col=False, header=0,
+        dataset_task_a = pd.read_csv('data/datasets/dataset_task_a.tsv', sep='\t', index_col=0, header=0,
                                      encoding='utf-8')
         feature_labels_task_a = load_object('data/features/labels/feature_labels_task_a')
 
         class_labels_task_b = load_object('data/class_labels/class_labels_task_b')
-        dataset_task_b = pd.read_csv('data/datasets/dataset_task_b.tsv', sep='\t', index_col=False, header=0,
+        dataset_task_b = pd.read_csv('data/datasets/dataset_task_b.tsv', sep='\t', index_col=0, header=0,
                                      encoding='utf-8')
         feature_labels_task_b = load_object('data/features/labels/feature_labels_task_b')
 
@@ -442,13 +448,13 @@ if __name__ == "__main__":
             save_object(feature_selector.get_top_n_features(20), 'data/features/top/top_comment_features')
             del feature_selector
             print('New reduced number of features: ' + str(len(comment_feature_labels)))
-            comment_dataset.to_csv('data/datasets/task_a_comment_dataset.tsv', sep='\t', header=True, index=False,
+            comment_dataset.to_csv('data/datasets/task_a_comment_dataset.tsv', sep='\t', header=True, index=True,
                                    encoding='utf-8')
             save_object(comment_labels, 'data/class_labels/task_a_comment_class_labels')
             save_object(comment_feature_labels, 'data/features/labels/task_a_comment_feature_labels')
 
         else:
-            comment_dataset = pd.read_csv('data/datasets/task_a_comment_dataset.tsv', sep='\t', index_col=False,
+            comment_dataset = pd.read_csv('data/datasets/task_a_comment_dataset.tsv', sep='\t', index_col=0,
                                           header=0,
                                           encoding='utf-8')
             comment_labels = load_object('data/class_labels/task_a_comment_class_labels')
@@ -476,13 +482,13 @@ if __name__ == "__main__":
             save_object(feature_selector.get_top_n_features(20), 'data/features/top/top_query_features')
             del feature_selector
             print('New reduced number of features: ' + str(len(query_feature_labels)))
-            query_dataset.to_csv('data/datasets/task_a_query_dataset.tsv', sep='\t', header=True, index=False,
+            query_dataset.to_csv('data/datasets/task_a_query_dataset.tsv', sep='\t', header=True, index=True,
                                  encoding='utf-8')
             save_object(query_labels, 'data/class_labels/task_a_query_class_labels')
             save_object(query_feature_labels, 'data/features/labels/task_a_query_feature_labels')
 
         else:
-            query_dataset = pd.read_csv('data/datasets/task_a_query_dataset.tsv', sep='\t', index_col=False, header=0,
+            query_dataset = pd.read_csv('data/datasets/task_a_query_dataset.tsv', sep='\t', index_col=0, header=0,
                                         encoding='utf-8')
             query_labels = load_object('data/class_labels/task_a_query_class_labels')
         print("Training query model for Task A...")
@@ -494,7 +500,8 @@ if __name__ == "__main__":
         scores.to_csv('scores/task_a_query_model_scores.tsv', sep='\t', index=True, header=True, encoding='utf-8')
     else:
         query_model = load_object('models/task_a_query_model')
-    if not isfile('models/task_a_support_deny_model') or not isfile('models/task_a_support_deny_model_scores.tsv'):
+
+    if not isfile('models/task_a_support_deny_model') or not isfile('scores/task_a_support_deny_model_scores.tsv'):
         if not isfile('data/datasets/task_a_support_deny_dataset.tsv') \
                 or not isfile('data/class_labels/task_a_support_deny_class_labels') \
                 or not isfile('data/features/labels/task_a_support_deny_feature_labels'):
@@ -508,14 +515,14 @@ if __name__ == "__main__":
             del feature_selector
             print('New reduced number of features: ' + str(len(support_deny_feature_labels)))
             support_deny_dataset.to_csv('data/datasets/task_a_support_deny_dataset.tsv', sep='\t', header=True,
-                                        index=False,
+                                        index=True,
                                         encoding='utf-8')
             save_object(support_deny_labels, 'data/class_labels/task_a_support_deny_class_labels')
             save_object(support_deny_feature_labels, 'data/features/labels/task_a_support_deny_feature_labels')
 
         else:
             support_deny_dataset = pd.read_csv('data/datasets/task_a_support_deny_dataset.tsv', sep='\t',
-                                               index_col=False,
+                                               index_col=0,
                                                header=0,
                                                encoding='utf-8')
             support_deny_labels = load_object('data/class_labels/task_a_support_deny_class_labels')
@@ -533,7 +540,8 @@ if __name__ == "__main__":
 
     evaluation_metrics.append('Cross-entropy loss')
     print('Class distribution for Task B: ' + str(get_class_distribution(class_labels_task_b)))
-    if not isfile('models/task_b_veracity_model') or not isfile('scores/task_b_veracity_model_scores.tsv'):
+    if not isfile('models/task_b_veracity_model') or not isfile('scores/task_b_veracity_model_scores.tsv') \
+            or not isfile("plots/veracity_model_roc_curve.png"):
         if not isfile('data/features/labels/task_b_feature_labels'):
             print('Original dataset size: ' + str(dataset_task_b.shape))
             print('Performing feature selection on dataset...')
@@ -543,7 +551,7 @@ if __name__ == "__main__":
             del feature_selector
             print('New reduced number of features: ' + str(len(task_b_feature_labels)))
             save_object(task_b_feature_labels, 'data/features/labels/task_b_feature_labels')
-            dataset_task_b.to_csv('data/datasets/dataset_task_b.tsv', sep='\t', header=True, index=False,
+            dataset_task_b.to_csv('data/datasets/dataset_task_b.tsv', sep='\t', header=True, index=True,
                                   encoding='utf-8')
 
         print("Training veracity model for Task B...")

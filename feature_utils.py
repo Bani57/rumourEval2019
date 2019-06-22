@@ -69,8 +69,9 @@ class FeatureSelector:
         features_retained = model.get_support(indices=True)
         features_retained = [self.feature_names[retained_feature] for retained_feature in features_retained]
         self.feature_names = features_retained
+        dataset_index = self.dataset.index
         self.dataset = model.transform(self.dataset)
-        self.dataset = pd.DataFrame(self.dataset, columns=features_retained)
+        self.dataset = pd.DataFrame(self.dataset, columns=features_retained, index=dataset_index)
 
     def get_top_n_features(self, n=10):
         if self.feature_importances is not None:
