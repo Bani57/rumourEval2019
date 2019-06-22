@@ -40,6 +40,16 @@ def read_tweet_json(folder, id_thread):
 
 
 if __name__ == "__main__":
+
+    folder_paths = ["data/class_labels", "data/datasets", "data/features/labels", "data/features/tf_idf",
+                    "data/features/top", "data/features/word2vec", "data/test_tweets", "data/tf_idf_documents",
+                    "data/thread_lists", "data/threads", "data/tweets", "data/vocabularies",
+                    "data/word2vec_documents", "models/", "scores/ablation", "submissions/", "plots/"]
+
+    for folder_path in folder_paths:
+        if not exists(folder_path):
+            makedirs(folder_path)
+
     twitter_dataset_folder = "../rumoureval-2019-training-data/twitter-english/"
     if not isfile('data/twitter_stories'):
         twitter_stories_folders = glob.glob(twitter_dataset_folder + "*")

@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-from os.path import isfile
+from os.path import isfile, exists
+from os import makedirs
 import glob
 import json
 import html
