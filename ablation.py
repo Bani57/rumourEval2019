@@ -1,8 +1,10 @@
-from dependencies import np, pd, isfile
-from file_utils import *
-from classification_utils import *
+from dependencies import seed, np, pd, isfile
+from file_utils import load_object
+from classification_utils import train_model
 
-ablation_labels = ["Without language style features", "Without TF-IDF and Word2Vec features",
+seed(57)
+
+ablation_labels = ["Baseline", "Without language style features", "Without TF-IDF and Word2Vec features",
                    "Without sentiment features", "Without graph features", "Without extra features"]
 
 evaluation_metrics = ['Accuracy', 'Precision', 'Recall', 'F1', 'ROC AUC']
@@ -26,7 +28,7 @@ extra_feature_labels = ['EVIDENTIALITY', 'CERTAINTY', 'CHARACTER COUNT', 'FAVORI
 
 
 def get_ablation_datasets(dataset):
-    datasets = []
+    datasets = [dataset, ]
     language_style_columns = [column for column in dataset.columns if
                               any(label in column for label in language_style_feature_labels)]
     tf_idf_word2vec_columns = [column for column in dataset.columns if "TF-IDF" in column or "WORD2VEC" in column]
@@ -51,14 +53,15 @@ def get_ablation_datasets(dataset):
 
 if __name__ == "__main__":
     if not isfile('scores/ablation/task_a_comment_scores.tsv'):
+        print("Performing ablation experiment for comment model...")
         comment_dataset = pd.read_csv('data/datasets/task_a_comment_dataset.tsv', sep='\t', index_col=False, header=0,
                                       encoding='utf-8')
         comment_class_labels = load_object('data/class_labels/task_a_comment_class_labels')
 
+        comment_ablation_scores = {}
         ablation_datasets = get_ablation_datasets(comment_dataset)
         del comment_dataset
 
-        comment_ablation_scores = {}
         for ablation_label, ablation_dataset in zip(ablation_labels, ablation_datasets):
             _, scores = train_model(ablation_dataset, comment_class_labels, optimize_parameters=False)
             comment_ablation_scores[ablation_label] = scores['Ensemble model']
@@ -69,14 +72,15 @@ if __name__ == "__main__":
                                        encoding='utf-8')
 
     if not isfile('scores/ablation/task_a_query_scores.tsv'):
+        print("Performing ablation experiment for query model...")
         query_dataset = pd.read_csv('data/datasets/task_a_query_dataset.tsv', sep='\t', index_col=False, header=0,
                                     encoding='utf-8')
         query_class_labels = load_object('data/class_labels/task_a_query_class_labels')
 
+        query_ablation_scores = {}
         ablation_datasets = get_ablation_datasets(query_dataset)
         del query_dataset
 
-        query_ablation_scores = {}
         for ablation_label, ablation_dataset in zip(ablation_labels, ablation_datasets):
             _, scores = train_model(ablation_dataset, query_class_labels, optimize_parameters=False)
             query_ablation_scores[ablation_label] = scores['Ensemble model']
@@ -87,15 +91,16 @@ if __name__ == "__main__":
                                      encoding='utf-8')
 
     if not isfile('scores/ablation/task_a_support_deny_scores.tsv'):
+        print("Performing ablation experiment for support vs deny model...")
         support_deny_dataset = pd.read_csv('data/datasets/task_a_support_deny_dataset.tsv', sep='\t', index_col=False,
                                            header=0,
                                            encoding='utf-8')
         support_deny_class_labels = load_object('data/class_labels/task_a_support_deny_class_labels')
 
+        support_deny_ablation_scores = {}
         ablation_datasets = get_ablation_datasets(support_deny_dataset)
         del support_deny_dataset
 
-        support_deny_ablation_scores = {}
         for ablation_label, ablation_dataset in zip(ablation_labels, ablation_datasets):
             _, scores = train_model(ablation_dataset, support_deny_class_labels, optimize_parameters=False)
             support_deny_ablation_scores[ablation_label] = scores['Ensemble model']
@@ -109,15 +114,16 @@ if __name__ == "__main__":
 
     evaluation_metrics.append('Cross-entropy loss')
     if not isfile('scores/ablation/task_b_scores.tsv'):
+        print("Performing ablation experiment for veracity model...")
         veracity_dataset = pd.read_csv('data/datasets/dataset_task_b.tsv', sep='\t', index_col=False,
                                        header=0,
                                        encoding='utf-8')
         veracity_class_labels = load_object('data/class_labels/class_labels_task_b')
 
+        veracity_ablation_scores = {}
         ablation_datasets = get_ablation_datasets(veracity_dataset)
         del veracity_dataset
 
-        veracity_ablation_scores = {}
         for ablation_label, ablation_dataset in zip(ablation_labels, ablation_datasets):
             _, scores = train_model(ablation_dataset, veracity_class_labels, optimize_parameters=False,
                                     balance_dataset=False, classify_with_probabilities=True)
