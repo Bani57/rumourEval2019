@@ -163,10 +163,12 @@ def score_classifier(classifier, dataset_tuples, probability=False):
         scores[1] += precision_score(validation_labels, predicted_labels, average='weighted')
         scores[2] += recall_score(validation_labels, predicted_labels, average='weighted')
         scores[3] += f1_score(validation_labels, predicted_labels, average='weighted')
-        scores[4] += roc_auc_score(validation_labels, predicted_labels, average='weighted')
         if probability:
             predicted_label_probabilities = classifier.predict_proba(validation_set)
+            scores[4] += roc_auc_score(validation_labels, predicted_label_probabilities[:, 1], average='weighted')
             scores[5] += log_loss(validation_labels, predicted_label_probabilities)
+        else:
+            scores[4] += roc_auc_score(validation_labels, predicted_labels, average='weighted')
     scores = [score / len(dataset_tuples) for score in scores]
     return scores
 
