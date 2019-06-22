@@ -25,7 +25,7 @@ from nltk import download
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import networkx as nx
 from collections import Counter
-from random import sample
+from random import seed, sample
 from scipy.spatial.distance import cosine
 from sklearn.feature_selection import SelectFromModel
 from sklearn.model_selection import train_test_split, GridSearchCV

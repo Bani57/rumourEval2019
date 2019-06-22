@@ -1,4 +1,6 @@
-from dependencies import RandomForestClassifier, SelectFromModel, pd
+from dependencies import seed, RandomForestClassifier, SelectFromModel, pd
+
+seed(57)
 
 random_forest = RandomForestClassifier(
     n_estimators=1000,

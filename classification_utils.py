@@ -1,6 +1,8 @@
-from dependencies import cosine, Counter, sample, train_test_split, GaussianNB, KNeighborsClassifier, \
+from dependencies import cosine, Counter, seed, sample, train_test_split, GaussianNB, KNeighborsClassifier, \
     LogisticRegression, SVC, MLPClassifier, RandomForestClassifier, VotingClassifier, accuracy_score, precision_score, \
     recall_score, f1_score, roc_auc_score, log_loss, GridSearchCV
+
+seed(57)
 
 num_cpu_cores = 6
 

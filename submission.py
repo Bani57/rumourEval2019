@@ -1,10 +1,12 @@
-from dependencies import glob, json, isfile
+from dependencies import seed, glob, json, isfile, pd
 from tweet_classes import ThreadTree
 from graph_utils import *
 from nlp_utils import *
-from feature_utils import *
+from feature_utils import FeatureSelector, difference_of_feature_vectors
 from classification_utils import classify_test_samples_task_a, classify_test_samples_task_b
 from file_utils import *
+
+seed(57)
 
 twitter_test_set_folder = "../rumoureval-2019-test-data/twitter-en-test-data/"
 
