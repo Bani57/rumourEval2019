@@ -64,7 +64,7 @@ class Tweet:
         for emoji in emojis:
             text = re.sub(emoji, ' ' + emoji + ' ', text)
         text = re.sub(r'[^\w\s.,?!:\-+\'' + emojis_concat + ']', ' ', text)
-        text = re.sub(r'(.)\1+', r'\1\1', text)
+        text = re.sub(r'(.{1,5})\1+', r'\1\1', text)
         text = re.sub(r'\.', ' . ', text)
         text = re.sub(',', ' , ', text)
         text = re.sub(r'\?', ' ? ', text)
@@ -101,7 +101,7 @@ class Tweet:
         for emoji in emojis:
             text = re.sub(emoji, ' ' + emoji + ' ', text)
         text = re.sub(r'[^\w\s.,?!:\-+\'' + emojis_concat + ']', ' ', text)
-        text = re.sub(r'(.)\1+', r'\1\1', text)
+        text = re.sub(r'(.{1,5})\1+', r'\1\1', text)
         text = re.sub(r'\.', ' . ', text)
         text = re.sub(',', ' , ', text)
         text = re.sub(r'\?', ' ? ', text)
